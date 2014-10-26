@@ -1,0 +1,29 @@
+{
+  "name": "now_then",
+  "version": "0.0.0",
+  "authors": [
+    "Neilos <nosniktatkinson@hotmail.co.uk>"
+  ],
+  "description": "Readable publishing and subscribing (pub-sub)",
+  "main": "src/now_then.js",
+  "keywords": [
+    "publish",
+    "subscribe",
+    "pub",
+    "sub",
+    "now",
+    "then",
+    "get",
+    "call",
+    "apply",
+    "bind"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/Neilos/now_then",
+  "ignore": [
+    "node_modules",
+    "bower_components",
+    "lib"
+    "spec",
+  ]
+}
