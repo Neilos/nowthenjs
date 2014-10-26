@@ -12,38 +12,34 @@ describe("Getting functions executed", function () {
     freddy = {}
   });
 
-  describe("executing a function", function () {
+  describe("when function is defined on object acting as 'this'", function () {
 
-    describe("on an object", function () {
-
-      it("with arguments", function () {
-        expect(bob.state).toEqual("awake")
-        now.get(bob,{to: "sleep"}, "soundly sleeping")
-        expect(bob.state).toEqual("soundly sleeping")
-      });
-
-      it("without arguments", function () {
-        expect(bob.state).toEqual("awake")
-        now.get(bob,{to: "sleep"})
-        expect(bob.state).toEqual("asleep")
-      });
-
+    it("can execute with arguments", function () {
+      expect(bob.state).toEqual("awake")
+      now.get(bob,{to: "sleep"}, "soundly sleeping")
+      expect(bob.state).toEqual("soundly sleeping")
     });
 
-    describe("borrowed from another object", function () {
+    it("can execute without arguments", function () {
+      expect(bob.state).toEqual("awake")
+      now.get(bob,{to: "sleep"})
+      expect(bob.state).toEqual("asleep")
+    });
 
-      it("with arguments", function () {
-        expect(freddy.state).toEqual(undefined)
-        now.get(freddy,{to: "sleep", acting_as: bob}, "soundly sleeping")
-        expect(freddy.state).toEqual("soundly sleeping")
-      });
+  });
 
-      it("without arguments", function () {
-        expect(freddy.state).toEqual(undefined)
-        now.get(freddy,{to: "sleep", acting_as: bob})
-        expect(freddy.state).toEqual("asleep")
-      });
+  describe("when function is borrowed from another object", function () {
 
+    it("can execute with arguments", function () {
+      expect(freddy.state).toEqual(undefined)
+      now.get(freddy,{to: "sleep", acting_as: bob}, "soundly sleeping")
+      expect(freddy.state).toEqual("soundly sleeping")
+    });
+
+    it("can execute without arguments", function () {
+      expect(freddy.state).toEqual(undefined)
+      now.get(freddy,{to: "sleep", acting_as: bob})
+      expect(freddy.state).toEqual("asleep")
     });
 
   });
