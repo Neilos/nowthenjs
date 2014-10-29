@@ -144,10 +144,11 @@ Due to differences in the underlying implementation, the `now.get` version is mo
 
 ```javascript
 var chef = {
-  makeCake: function (arguments) {
-    this.ingredients.push(arguments);
+  mixCake: function () {
+    var newIngredients = Array.prototype.slice.call(arguments)
+    this.cakeIngredients = this.cakeIngredients.concat(newIngredients);
   },
-  ingredients: []
+  cakeIngredients: [],
 }
 ```
 
@@ -155,28 +156,28 @@ Parameters can be passed to a function during binding, in an array, as the last 
 
 ```javascript
 /// parameters passed as an array during binding
-then.get( chef, {to: "makeCake"}, [ "egg", "flour", "sugar" ] )();
-chef.ingredients /// => [ "egg", "flour", "sugar" ]
+then.get( chef, {to: "mixCake"}, [ "egg", "flour", "sugar" ] )();
+chef.cakeIngredients /// => [ "egg", "flour", "sugar" ]
 ```
 
 ...or parameters can be passed to a function during execution as a normal list of parameters
 
 ```javascript
 /// parameters passed only during execution
-then.get( chef, {to: "makeCake"} )( "egg", "flour", "sugar" );
-chef.ingredients /// => [ "egg", "flour", "sugar" ]
+then.get( chef, {to: "mixCake"} )( "egg", "flour", "sugar" );
+chef.cakeIngredients /// => [ "egg", "flour", "sugar" ]
 ```
 
 ...or both: when binding **and** during function execution
 
 ```javascript
 /// parameters passed both during binding and during execution
-then.get( chef, {to: "makeCake"}, [ "egg", "flour" ] )( "sugar" );
-chef.ingredients // => [ "egg", "flour", "sugar" ]
+then.get( chef, {to: "mixCake"}, [ "egg", "flour" ] )( "sugar" );
+chef.cakeIngredients // => [ "egg", "flour", "sugar" ]
 
 /// alternatively
-now.get( chef, {to: "makeCake"}, [ "egg", "flour", "sugar" ] );
-chef.ingredients /// => [ "egg", "flour", "sugar" ]
+now.get( chef, {to: "mixCake"}, [ "egg", "flour", "sugar" ] );
+chef.cakeIngredients /// => [ "egg", "flour", "sugar" ]
 ```
 
 ---
