@@ -16,8 +16,8 @@ describe("Getting functions executed", function () {
 
     it("can execute with arguments", function () {
       expect(bob.state).toEqual("awake")
-      now.get(bob,{to: "sleep"}, "soundly sleeping")
-      expect(bob.state).toEqual("soundly sleeping")
+      now.get(bob,{to: "sleep"}, "soundly")
+      expect(bob.state).toEqual("soundly")
     });
 
     it("can execute without arguments", function () {
@@ -32,13 +32,13 @@ describe("Getting functions executed", function () {
 
     it("can execute with arguments", function () {
       expect(freddy.state).toEqual(undefined)
-      now.get(freddy,{to: "sleep", acting_as: bob}, "soundly sleeping")
-      expect(freddy.state).toEqual("soundly sleeping")
+      now.get(freddy,{acting_as: bob, to: "sleep"}, "soundly")
+      expect(freddy.state).toEqual("soundly")
     });
 
     it("can execute without arguments", function () {
       expect(freddy.state).toEqual(undefined)
-      now.get(freddy,{to: "sleep", acting_as: bob})
+      now.get(freddy,{acting_as: bob, to: "sleep"})
       expect(freddy.state).toEqual("asleep")
     });
 
