@@ -60,6 +60,43 @@ describe("event handling", function () {
 
     })
 
+    describe("previously specified function responses", function () {
+      var procrastinator, goGetter, procrastinatorResponse, competitor
+
+      beforeEach(function () {
+        procrastinator = {
+          state: "chilling",
+          ceaseChilling: function () {
+            this.state = "active"
+          }
+        }
+        goGetter = {}
+        procrastinatorResponse = now.when(goGetter, "isDoingImportantThings", procrastinator.ceaseChilling.bind(procrastinator))
+      })
+
+      it("can be forgotten", function () {
+        expect(procrastinator.state).toEqual("chilling")
+        now.announce(goGetter, "isDoingImportantThings")
+        expect(procrastinator.state).toEqual("active")
+
+        procrastinator.state = "chilling" // reset state
+        expect(procrastinator.state).toEqual("chilling")
+        procrastinatorResponse.forgetAboutIt()
+        now.announce(goGetter, "isDoingImportantThings")
+        expect(procrastinator.state).toEqual("chilling")
+      })
+
+      it("can be forgotten without affecting other responses", function () {
+        competitor = Object.create(procrastinator)
+        now.when(goGetter, "isDoingImportantThings", competitor.ceaseChilling.bind(competitor))
+        procrastinatorResponse.forgetAboutIt()
+        now.announce(goGetter, "isDoingImportantThings")
+        expect(procrastinator.state).toEqual("chilling")
+        expect(competitor.state).toEqual("active")
+      })
+
+    })
+
   })
 
 })

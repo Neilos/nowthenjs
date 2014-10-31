@@ -35,15 +35,17 @@
     },
 
     when: function (object, isSomething, doThis) {
-      if (object === "anything") {
-        responsesTo["anything"][isSomething] = responsesTo["anything"][isSomething] || []
-        responsesTo["anything"][isSomething].push(doThis)
-      } else {
-        var thisThing = object.__uniqueId()
-        responsesTo[thisThing] = responsesTo[thisThing] || {}
-        responsesTo[thisThing][isSomething] = responsesTo[thisThing][isSomething] || []
-        responsesTo[thisThing][isSomething].push(doThis)
-      }
+      var thisThing = (object === "anything") ? "anything" : object.__uniqueId()
+      responsesTo[thisThing] = responsesTo[thisThing] || {}
+      responsesTo[thisThing][isSomething] = responsesTo[thisThing][isSomething] || []
+      var index = responsesTo[thisThing][isSomething].push(doThis) -1
+
+      // Provide handle back for removal of response functions
+      return {
+        forgetAboutIt: function() {
+          responsesTo[thisThing][isSomething].splice(index, 1);
+        }
+      };
     },
 
     announce: function (object, isSomething) {
