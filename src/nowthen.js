@@ -10,56 +10,63 @@
     };
   }
 
-  var eventReactions = {}
+  var responsesTo = {
+    "anything": {}
+  }
+
+  var nobodyCaresThat = function (thisThing, isSomething) {
+    return (!responsesTo[thisThing] ||
+            !responsesTo[thisThing][isSomething] ||
+            !responsesTo[thisThing][isSomething].length === 0)
+  }
+
+  var nobodyCaresIfAnything = function (isSomething) {
+    return (!responsesTo["anything"][isSomething] ||
+            !responsesTo["anything"][isSomething].length === 0)
+  }
 
   this.now = {
-    get: function (thisObject, functionConfig) {
-      var functionName =  functionConfig['to']
-      var definingObject =  functionConfig['imitating'] || thisObject
-      var arrayArgs = functionConfig['using'] || []
-      var functionArgs = Array.prototype.slice.call(arguments, 2)
-      return definingObject[functionName].apply(thisObject, arrayArgs.concat(functionArgs))
+    get: function (object, config) {
+      var functionName =  config['to']
+      var definingObject =  config['imitating'] || object
+      var arrayArgs = config['using'] || []
+      var parameterArgs = Array.prototype.slice.call(arguments, 2)
+      return definingObject[functionName].apply(object, arrayArgs.concat(parameterArgs))
     },
 
-    when: function (object, event, executable) {
+    when: function (object, isSomething, doThis) {
       if (object === "anything") {
-        if (!eventReactions["anything"]) eventReactions["anything"] = {}
-        if (!eventReactions["anything"][event]) eventReactions["anything"][event] = []
-        eventReactions["anything"][event].push(executable)
+        responsesTo["anything"][isSomething] = responsesTo["anything"][isSomething] || []
+        responsesTo["anything"][isSomething].push(doThis)
       } else {
-        if (!eventReactions[object.__uniqueId()]) eventReactions[object.__uniqueId()] = {}
-        if (!eventReactions[object.__uniqueId()][event]) eventReactions[object.__uniqueId()][event] = []
-        eventReactions[object.__uniqueId()][event].push(executable)
+        var thisThing = object.__uniqueId()
+        responsesTo[thisThing] = responsesTo[thisThing] || {}
+        responsesTo[thisThing][isSomething] = responsesTo[thisThing][isSomething] || []
+        responsesTo[thisThing][isSomething].push(doThis)
       }
-
     },
 
-    announce: function (object, event) {
-      if (!eventReactions[object.__uniqueId()] ||
-          !eventReactions[object.__uniqueId()][event] ||
-          !eventReactions[object.__uniqueId()][event].length === 0) {
-        if (!eventReactions["anything"] ||
-            !eventReactions["anything"][event] ||
-            !eventReactions["anything"][event].length === 0) {
+    announce: function (object, isSomething) {
+      var thisThing = object.__uniqueId()
+      if (nobodyCaresThat(thisThing, isSomething)) {
+        if (nobodyCaresIfAnything(isSomething)) {
           return;
         } else {
-          var thingsToBeDone = eventReactions["anything"][event]
+          var responses = responsesTo["anything"][isSomething]
         }
       } else {
-        var thingsToBeDone = eventReactions[object.__uniqueId()][event]
+        var responses = responsesTo[thisThing][isSomething]
       }
 
-      thingsToBeDone.forEach(function(item) {
-          item();
-      });
+      responses.forEach(function(response) { response(); });
     }
   }
 
   this.then = {
-    get: function (thisObject, functionConfig) {
-      var functionName =  functionConfig['to']
-      var definingObject =  functionConfig['imitating'] || thisObject
-      var arrayArgs = functionConfig['using'] || []
+    get: function (thisObject, config) {
+      var functionName =  config['to']
+      var definingObject =  config['imitating'] || thisObject
+      var arrayArgs = config['using'] || []
       var functionArgs = Array.prototype.slice.call(arguments, 2)
       var boundArgs = arrayArgs.concat(functionArgs)
       return definingObject[functionName].bind.apply(definingObject[functionName], [thisObject].concat(boundArgs))

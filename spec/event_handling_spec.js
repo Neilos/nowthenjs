@@ -45,7 +45,7 @@ describe("event handling", function () {
         }
       })
 
-      it("specified function responses get executed", function () {
+      it("specified function responses get executed accordingly", function () {
         expect(lawyer.mood).toEqual("sober")
         now.when("anything", "hasCheated", lawyer.anticipateClient.bind(lawyer))
         expect(lawyer.mood).toEqual("sober")
