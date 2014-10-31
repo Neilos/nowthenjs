@@ -1,11 +1,11 @@
 {
-  "name": "now_then",
+  "name": "nowthenjs",
   "version": "0.0.0",
   "authors": [
     "Neilos <nosniktatkinson@hotmail.co.uk>"
   ],
   "description": "Readable publishing and subscribing (pub-sub)",
-  "main": "src/now_then.js",
+  "main": "src/nowthen.js",
   "keywords": [
     "publish",
     "subscribe",
@@ -19,7 +19,7 @@
     "bind"
   ],
   "license": "MIT",
-  "homepage": "https://github.com/Neilos/now_then",
+  "homepage": "https://github.com/Neilos/nowthenjs",
   "ignore": [
     "node_modules",
     "bower_components",
