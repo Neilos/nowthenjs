@@ -40,7 +40,7 @@
       responsesTo[thisThing][isSomething] = responsesTo[thisThing][isSomething] || []
       var index = responsesTo[thisThing][isSomething].push(doThis) -1
 
-      // Provide handle back for removal of response functions
+      // Provide handle for forgetting about response functions
       return {
         forgetAboutIt: function() {
           responsesTo[thisThing][isSomething].splice(index, 1);
@@ -53,21 +53,18 @@
       if (nobodyCaresThat(thisThing, isSomething)) {
         if (nobodyCaresIfAnything(isSomething)) {
           return;
-        } else {
-          var responses = responsesTo["anything"][isSomething]
-        }
-      } else {
-        var responses = responsesTo[thisThing][isSomething]
+        } else { thisThing = "anything" }
       }
-
-      responses.forEach(function(response) { response(); });
+      responsesTo[thisThing][isSomething].forEach(function(response) {
+        response()
+      });
     }
   }
 
   this.then = {
     get: function (thisObject, config) {
       var functionName =  config['to']
-      var definingObject =  config['imitating'] || thisObject
+      var definingObject = config['imitating'] || thisObject
       var arrayArgs = config['using'] || []
       var functionArgs = Array.prototype.slice.call(arguments, 2)
       var boundArgs = arrayArgs.concat(functionArgs)
