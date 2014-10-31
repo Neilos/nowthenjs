@@ -72,6 +72,14 @@
       var functionArgs = Array.prototype.slice.call(arguments, 2)
       var boundArgs = arrayArgs.concat(functionArgs)
       return definingObject[functionName].bind.apply(definingObject[functionName], [thisObject].concat(boundArgs))
+    },
+
+    when: function () {
+      return now.when.apply.bind(now.when, this, arguments);
+    },
+
+    announce: function () {
+      return now.announce.apply.bind(now.announce, this, arguments);
     }
   }
 
