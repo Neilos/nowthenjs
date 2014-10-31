@@ -1,9 +1,22 @@
-## What does this library give me?
-* Nicer syntax for function binding: Increase the readability of your code, by eliminating `bind`, `call` and `apply` from your code.
-* State `when` functions get executed, and trigger that execution by `announce`ing events
+# Contents
+  * [Library Overview](#library-overview)
+    * [What does this library give me?](#what-library-gives-me)
+  * [Executing functions and binding to this](#executing-and-binding)
+    * [Borrowing functions from other objects](#borrowing-functions)
+    * [Callback functions](#callback-functions)
+    * [Binding and executing versus just binding](#binding-versus-executing)
+    * [Parameter Passing](#parameter-passing)
+  * [Event Handling](#event-handling)
+    * [Events emitted by a single object](#single-object-events)
+    * [Events emitted by more than one object](#multiple-object-events)
+    * [Combining event driven execution with binding to 'this'](#combining-events-and-binding)
 
 ---
-## Library Overview
+# <a name="library-overview"></a> Library Overview
+
+### What does this library give me? <a name="what-library-gives-me"></a>
+* Nicer syntax for function binding: Increase the readability of your code, by eliminating `bind`, `call` and `apply` from your code.
+* State `when` functions get executed, and trigger that execution by `announce`ing events
 
 This library provides two top level (i.e. global) objects with identically named functions:
 * `now`
@@ -20,9 +33,9 @@ These functions all accept function arguments (as well as others). For the `then
 (Read on: it will become clear).
 
 ---
-## Executing functions and binding to this
+# <a name="executing-and-binding"></a> Executing functions and binding to this
 
-### Borrowing functions from other objects
+## <a name="borrowing-functions"></a> Borrowing functions from other objects
 #### (AKA: An alternative to calling/applying)
 
 Suppose we have an object with some function(s) and attribute(s):
@@ -64,8 +77,8 @@ now.get(freddy, {imitating: bob, to: "sleep"});
 freddy.state;  // => 'asleep'
 ```
 
-### Callback functions
-#### AKA An alternative to binding
+## <a name="callback-functions"></a> Callback functions
+### AKA An alternative to binding
 
 Suppose we have an object with some function(s) and attribute(s):
 
@@ -109,7 +122,7 @@ setTimeout( then.get(bob, {to: 'sleep'});, 1000);
 bob.state;  // => "asleep"
 ```
 
-### Binding and executing versus just binding
+## Binding and executing versus just binding <a name="binding-versus-executing"></a>
 
 Note that when we want to bind to the value of `this` *but don't want to execute the function immediately* we call `get` on the `then` object:
 
@@ -139,7 +152,7 @@ now.get(freddy, {imitating: bob, to: 'sleep'});
 Due to differences in the underlying implementation, the `now.get` version is more performant than the `then.get` version and should be preferred whenever immediate execution of a function is required.
 
 
-### Parameters
+## <a name="parameter-passing"></a> Parameter Passing
 
 ```javascript
 // Example object
@@ -151,7 +164,7 @@ var chef = {
   cakeIngredients: [],
 }
 ```
-#### 'Normal' parameter passing
+### 'Normal' parameter passing
 
 ...to functions executed immediately
 
@@ -181,7 +194,7 @@ boundFn() // execute the bound function
 chef.cakeIngredients // => [ "egg", "flour", "sugar" ]
 ```
 
-#### Passing parameters as an array
+### Passing parameters as an array
 
 ...to functions executed immediately
 
@@ -211,7 +224,7 @@ boundFn() // execute the bound function
 chef.cakeIngredients // => [ "egg", "flour", "sugar" ]
 ```
 
-#### Passing parameters 'normally' *and* as an array
+### Passing parameters 'normally' *and* as an array
 
 ...to functions executed immediately
 
@@ -247,9 +260,9 @@ chef.cakeIngredients // => [ "egg", "flour", "sugar", "milk" ]
 
 
 ---
-## Event Handling
+# <a name="event-handling"></a> Event Handling
 
-### Events emitted by a single object
+## <a name="single-object-events"></a> Events emitted by a single object
 
 Suppose we have one object that we want to react to some change in another object. We can use the `announce` function to trigger events and the `when` function to specify the event consequences.
 
@@ -281,7 +294,7 @@ husband.cheat();
 husband.marital_status // => 'single'
 wife.marital_status // => 'single'
 ```
-### Events emitted by more than one object
+## <a name="multiple-object-events"></a> Events emitted by more than one object
 
 When a number of objects emit the same event...
 
@@ -317,7 +330,7 @@ var dog = {
   state: "lazin' about"
 }
 
-then.when([ squirrel, cat ],
+now.when([ squirrel, cat ],
           "isRunning",
           function (runningThing) {
             dog.chase(runningThing);
@@ -337,7 +350,7 @@ If we don't care what object is emitting the event we can pass the string `"anyt
 ```javascript
 dog.state;  // => "lazin' about"
 
-then.when("anything",
+now.when("anything",
           "isRunning",
           function (eventEmittingObject) {
             dog.chase(eventEmittingObject);
@@ -346,7 +359,8 @@ then.when("anything",
 wolf.run();
 dog.state;  // => "chasing"
 ```
-### Combining event driven execution with binding to 'this'
+## <a name="combining-events-and-binding"></a> Combining event driven execution with binding to 'this'
+
 For the callback function passed as the third argument to the `when` function we can use the `then.get` syntax discussed earlier to bind the value of `this`.
 
 ```javascript
