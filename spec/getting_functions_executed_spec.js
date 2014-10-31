@@ -47,25 +47,25 @@ describe("Getting functions executed", function () {
 
     it("can execute without arguments", function () {
       expect(freddy.state).toEqual(undefined)
-      now.get(freddy,{acting_as: bob, to: "sleep"})
+      now.get(freddy,{imitating: bob, to: "sleep"})
       expect(freddy.state).toEqual("asleep")
     });
 
     it("can execute with arguments", function () {
       expect(freddy.state).toEqual(undefined)
-      now.get(freddy,{acting_as: bob, to: "sleep"}, "soundly")
+      now.get(freddy,{imitating: bob, to: "sleep"}, "soundly")
       expect(freddy.state).toEqual("soundly")
     });
 
     it("can execute with an array of arguments", function () {
       var listOfIngredients = ["eggs", "sugar", "flour"]
-      var cake = now.get(freddy, {acting_as: bob, to: "makeCake", using: listOfIngredients})
+      var cake = now.get(freddy, {imitating: bob, to: "makeCake", using: listOfIngredients})
       expect(cake).toEqual("cake with ingredients: eggs, sugar, flour")
     })
 
     it("can execute with a mixture of ordinary arguments and an array of arguments", function () {
       var listOfIngredients = ["eggs", "sugar"]
-      var cake = now.get(freddy, {acting_as: bob, to: "makeCake", using: listOfIngredients}, "raisins")
+      var cake = now.get(freddy, {imitating: bob, to: "makeCake", using: listOfIngredients}, "raisins")
       expect(cake).toEqual("cake with ingredients: eggs, sugar, raisins")
     })
 
