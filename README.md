@@ -59,7 +59,7 @@ Alternatively, using this library...
 
 ```javascript
 /// This executes bob.sleep with freddy bound as 'this'
-now.get(freddy, {acting_as: bob, to: "sleep"});
+now.get(freddy, {imitating: bob, to: "sleep"});
 
 freddy.state;  /// => 'asleep'
 ```
@@ -116,7 +116,7 @@ Note that when we want to bind to the value of `this` *but don't want to execute
 ```javascript
 /// binds freddy to this but doesn't execute the sleep function
 /// same as bob.sleep.bind(freddy);
-then.get(freddy, {acting_as: bob, to: 'sleep'});
+then.get(freddy, {imitating: bob, to: 'sleep'});
 ```
 
 However, if we want to *both* bind to `this` *and also immediately execute* the function, what then?
@@ -125,16 +125,16 @@ We could just call the bound function, just like any normal javascript function.
 
 ```javascript
 /// All of the following bind bob to this and execute sleep immediately
-then.get(freddy, {acting_as: bob, to: 'sleep'})();       // 1: using ()
-then.get(freddy, {acting_as: bob, to: 'sleep'}).call();  // 2: using call
-then.get(freddy, {acting_as: bob, to: 'sleep'}).apply(); // 3: using apply
+then.get(freddy, {imitating: bob, to: 'sleep'})();       // 1: using ()
+then.get(freddy, {imitating: bob, to: 'sleep'}).call();  // 2: using call
+then.get(freddy, {imitating: bob, to: 'sleep'}).apply(); // 3: using apply
 ```
 
 An alternative, to make it more explicit that we are executing the function *now*, we can call `get` on the `now` object.
 
 ```javascript
 /// binds bob to this and executes sleep immediately
-now.get(freddy, {acting_as: bob, to: 'sleep'});
+now.get(freddy, {imitating: bob, to: 'sleep'});
 ```
 
 Due to differences in the underlying implementation, the `now.get` version is more performant than the `then.get` version and should be preferred whenever immediate execution of a function is required.

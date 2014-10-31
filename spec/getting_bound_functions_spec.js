@@ -29,18 +29,58 @@ describe("Getting bound functions", function () {
       expect(boundFunction()).toBe("tasty air cake")
     });
 
-    it("can return a bound function with full argument list bound", function () {
-      var boundFunction = then.get(chef, {to: "mixCake"}, "eggs", "flour", "milk", "sugar");
-      expect(typeof boundFunction).toBe('function')
-      boundFunction()
-      expect(chef.cakeIngredients).toEqual(["eggs", "flour", "milk", "sugar"])
+    describe("when arguments are passed normally (i.e. comma separated)", function () {
+
+      it("can return a bound function with full argument list bound", function () {
+        var boundFunction = then.get(chef, {to: "mixCake"}, "eggs", "flour", "milk", "sugar");
+        expect(typeof boundFunction).toBe('function')
+        boundFunction()
+        expect(chef.cakeIngredients).toEqual(["eggs", "flour", "milk", "sugar"])
+      });
+
+      it("can return a bound function with only partial argument list bound", function () {
+        var boundFunction = then.get(chef, {to: "mixCake"}, "eggs", "flour");
+        expect(typeof boundFunction).toBe('function')
+        boundFunction("milk", "sugar")
+        expect(chef.cakeIngredients).toEqual(["eggs", "flour", "milk", "sugar"])
+      });
+
     });
 
-    it("can return a bound function with only partial argument list bound", function () {
-      var boundFunction = then.get(chef, {to: "mixCake"}, "eggs", "flour");
-      expect(typeof boundFunction).toBe('function')
-      boundFunction("milk", "sugar")
-      expect(chef.cakeIngredients).toEqual(["eggs", "flour", "milk", "sugar"])
+    describe("when arguments are passed as an array", function () {
+
+      it("can return a bound function with full argument list bound", function () {
+        var boundFunction = then.get(chef, {to: "mixCake", using: ["eggs", "flour", "milk", "sugar"]});
+        expect(typeof boundFunction).toBe('function')
+        boundFunction()
+        expect(chef.cakeIngredients).toEqual(["eggs", "flour", "milk", "sugar"])
+      });
+
+      it("can return a bound function with only partial argument list bound", function () {
+        var boundFunction = then.get(chef, {to: "mixCake", using: ["eggs", "flour"]});
+        expect(typeof boundFunction).toBe('function')
+        boundFunction("milk", "sugar")
+        expect(chef.cakeIngredients).toEqual(["eggs", "flour", "milk", "sugar"])
+      });
+
+    });
+
+    describe("when arguments are passed normally and as an array", function () {
+
+      it("can return a bound function with full argument list bound", function () {
+        var boundFunction = then.get(chef, {to: "mixCake", using: ["eggs", "flour"]}, "milk", "sugar");
+        expect(typeof boundFunction).toBe('function')
+        boundFunction()
+        expect(chef.cakeIngredients).toEqual(["eggs", "flour", "milk", "sugar"])
+      });
+
+      it("can return a bound function with only partial argument list bound", function () {
+        var boundFunction = then.get(chef, {to: "mixCake", using: ["eggs", "flour"]}, "milk");
+        expect(typeof boundFunction).toBe('function')
+        boundFunction("sugar")
+        expect(chef.cakeIngredients).toEqual(["eggs", "flour", "milk", "sugar"])
+      });
+
     });
 
   });
@@ -48,23 +88,63 @@ describe("Getting bound functions", function () {
   describe("when function is borrowed from another object", function () {
 
     it("can return a bound function without arguments bound", function () {
-      var boundFunction = then.get(amateurCook, {acting_as: chef, to: "cook"});
+      var boundFunction = then.get(amateurCook, {imitating: chef, to: "cook"});
       expect(typeof boundFunction).toBe('function')
       expect(boundFunction()).toBe("tasty air cake")
     });
 
-    it("can return a bound function with full argument list bound", function () {
-      var boundFunction = then.get(amateurCook, {acting_as: chef, to: "mixCake"}, "eggs", "flour", "milk", "sugar");
-      expect(typeof boundFunction).toBe('function')
-      boundFunction()
-      expect(amateurCook.cakeIngredients).toEqual(["eggs", "flour", "milk", "sugar"])
+    describe("when arguments are passed normally (i.e. comma separated)", function () {
+
+      it("can return a bound function with full argument list bound", function () {
+        var boundFunction = then.get(amateurCook, {imitating: chef, to: "mixCake"}, "eggs", "flour", "milk", "sugar");
+        expect(typeof boundFunction).toBe('function')
+        boundFunction()
+        expect(amateurCook.cakeIngredients).toEqual(["eggs", "flour", "milk", "sugar"])
+      });
+
+      it("can return a bound function with only partial argument list bound", function () {
+        var boundFunction = then.get(amateurCook, {imitating: chef, to: "mixCake"}, "eggs", "flour");
+        expect(typeof boundFunction).toBe('function')
+        boundFunction("milk")
+        expect(amateurCook.cakeIngredients).toEqual(["eggs", "flour", "milk"])
+      });
+
     });
 
-    it("can return a bound function with only partial argument list bound", function () {
-      var boundFunction = then.get(amateurCook, {acting_as: chef, to: "mixCake"}, "eggs", "flour");
-      expect(typeof boundFunction).toBe('function')
-      boundFunction("milk")
-      expect(amateurCook.cakeIngredients).toEqual(["eggs", "flour", "milk"])
+    describe("when arguments are passed as an array", function () {
+
+      it("can return a bound function with full argument list bound", function () {
+        var boundFunction = then.get(amateurCook, {imitating: chef, to: "mixCake", using: ["eggs", "flour", "milk", "sugar"]});
+        expect(typeof boundFunction).toBe('function')
+        boundFunction()
+        expect(amateurCook.cakeIngredients).toEqual(["eggs", "flour", "milk", "sugar"])
+      });
+
+      it("can return a bound function with only partial argument list bound", function () {
+        var boundFunction = then.get(amateurCook, {imitating: chef, to: "mixCake", using: ["eggs", "flour"]});
+        expect(typeof boundFunction).toBe('function')
+        boundFunction("milk")
+        expect(amateurCook.cakeIngredients).toEqual(["eggs", "flour", "milk"])
+      });
+
+    });
+
+    describe("when arguments are passed normally and as an array", function () {
+
+      it("can return a bound function with full argument list bound", function () {
+        var boundFunction = then.get(amateurCook, {imitating: chef, to: "mixCake", using: ["eggs", "flour"]}, "milk", "sugar");
+        expect(typeof boundFunction).toBe('function')
+        boundFunction()
+        expect(amateurCook.cakeIngredients).toEqual(["eggs", "flour", "milk", "sugar"])
+      });
+
+      it("can return a bound function with only partial argument list bound", function () {
+        var boundFunction = then.get(amateurCook, {imitating: chef, to: "mixCake", using: ["eggs", "flour"]}, "sugar");
+        expect(typeof boundFunction).toBe('function')
+        boundFunction("milk")
+        expect(amateurCook.cakeIngredients).toEqual(["eggs", "flour", "sugar", "milk"])
+      });
+
     });
 
   });
