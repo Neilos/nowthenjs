@@ -5,11 +5,11 @@
 ---
 ## Library Overview
 
-This library provides two top level (i.e. global) objects:
+This library provides two top level (i.e. global) objects with identically named functions:
 * `now`
 * `then`
 
-Both objects have the following functions:
+Both objects have functions with the following names:
 
 * `get`
 * `when`
@@ -38,30 +38,30 @@ var bob = {
 
 ```javascript
 var freddy = {};
-freddy.state;    /// => undefined
-freddy.sleep();  /// Won't work! Sleep is not defined on freddy
-freddy.state;    /// => still undefined
+freddy.state;    // => undefined
+freddy.sleep();  // Won't work! Sleep is not defined on freddy
+freddy.state;    // => still undefined
 ```
 
 If we want to share the first object's function(s) with the second object, then, in Javascript, we can "borrow" the first object's function, by binding the second object to the value of `this` when calling the first object's function.
 
 ```javascript
-/// Any of the following...
-bob.sleep.call(freddy);   /// option 1 using call
-bob.sleep.apply(freddy);  /// option 2 using apply
-bob.sleep.bind(freddy)(); /// option 3 using bind and ()
+// Any of the following...
+bob.sleep.call(freddy);   // option 1 using call
+bob.sleep.apply(freddy);  // option 2 using apply
+bob.sleep.bind(freddy)(); // option 3 using bind and ()
 
-/// ...will result in:
-freddy.state;  /// => 'asleep'
+// ...will result in:
+freddy.state;  // => 'asleep'
 ```
 
 Alternatively, using this library...
 
 ```javascript
-/// This executes bob.sleep with freddy bound as 'this'
+// This executes bob.sleep with freddy bound as 'this'
 now.get(freddy, {imitating: bob, to: "sleep"});
 
-freddy.state;  /// => 'asleep'
+freddy.state;  // => 'asleep'
 ```
 
 ### Callback functions
@@ -82,14 +82,14 @@ And suppose we have a function that executes another function as a callback
 In Javascript, we cannot just pass in the unexecuted version of our function, if we care about the value of `this`. (Remember that Javascript sets the value of `this` according to the context when the function is executed.)
 
 ```javascript
-bob.state; /// => "awake"
+bob.state; // => "awake"
 
-/// The following won't work!
-/// It sets window state to "asleep"; not bob's state
+// The following won't work!
+// It sets window state to "asleep"; not bob's state
 setTimeout( bob.sleep , 1000);
 
-bob.state; /// => still "awake"
-window.state; /// => "asleep"!!?
+bob.state; // => still "awake"
+window.state; // => "asleep"!!?
 ```
 
 To get our function to execute with the right object bound to `this` the normal javascript way (in ECMA 5) is to use `bind`
@@ -97,16 +97,16 @@ To get our function to execute with the right object bound to `this` the normal 
 ```javascript
 setTimeout( bob.sleep.bind(bob), 1000);
 
-bob.state;  /// => "asleep"
+bob.state;  // => "asleep"
 ```
 
 Alternatively, using this library...
 
 ```javascript
-/// The following binds bob to this in the function sleep
+// The following binds bob to this in the function sleep
 setTimeout( then.get(bob, {to: 'sleep'});, 1000);
 
-bob.state;  /// => "asleep"
+bob.state;  // => "asleep"
 ```
 
 ### Binding and executing versus just binding
@@ -114,8 +114,8 @@ bob.state;  /// => "asleep"
 Note that when we want to bind to the value of `this` *but don't want to execute the function immediately* we call `get` on the `then` object:
 
 ```javascript
-/// binds freddy to this but doesn't execute the sleep function
-/// same as bob.sleep.bind(freddy);
+// binds freddy to this but doesn't execute the sleep function
+// same as bob.sleep.bind(freddy);
 then.get(freddy, {imitating: bob, to: 'sleep'});
 ```
 
@@ -124,25 +124,25 @@ However, if we want to *both* bind to `this` *and also immediately execute* the 
 We could just call the bound function, just like any normal javascript function.
 
 ```javascript
-/// All of the following bind bob to this and execute sleep immediately
-then.get(freddy, {imitating: bob, to: 'sleep'})();       // 1: using ()
-then.get(freddy, {imitating: bob, to: 'sleep'}).call();  // 2: using call
-then.get(freddy, {imitating: bob, to: 'sleep'}).apply(); // 3: using apply
+// binds bob to this and executes sleep immediately
+var boundFn = then.get(freddy, {imitating: bob, to: 'sleep'});
+boundFn();
 ```
 
-An alternative, to make it more explicit that we are executing the function *now*, we can call `get` on the `now` object.
+But, since we are executing the function *now*, we can instead call `get` on the `now` object.
 
 ```javascript
-/// binds bob to this and executes sleep immediately
+// binds bob to this and executes sleep immediately in one step
 now.get(freddy, {imitating: bob, to: 'sleep'});
 ```
 
 Due to differences in the underlying implementation, the `now.get` version is more performant than the `then.get` version and should be preferred whenever immediate execution of a function is required.
 
 
-### Parameter passing
+### Parameters
 
 ```javascript
+// Example object
 var chef = {
   mixCake: function () {
     var newIngredients = Array.prototype.slice.call(arguments)
@@ -151,34 +151,100 @@ var chef = {
   cakeIngredients: [],
 }
 ```
+#### 'Normal' parameter passing
 
-Parameters can be passed to a function during binding, in an array, as the last argument to the `get` function.
-
-```javascript
-/// parameters passed as an array during binding
-then.get( chef, {to: "mixCake"}, [ "egg", "flour", "sugar" ] )();
-chef.cakeIngredients /// => [ "egg", "flour", "sugar" ]
-```
-
-...or parameters can be passed to a function during execution as a normal list of parameters
+...to functions executed immediately
 
 ```javascript
-/// parameters passed only during execution
-then.get( chef, {to: "mixCake"} )( "egg", "flour", "sugar" );
-chef.cakeIngredients /// => [ "egg", "flour", "sugar" ]
-```
-
-...or both: when binding **and** during function execution
-
-```javascript
-/// parameters passed both during binding and during execution
-then.get( chef, {to: "mixCake"}, [ "egg", "flour" ] )( "sugar" );
+// Native Javascript
+chef.mixcake("egg", "flour", "sugar")
 chef.cakeIngredients // => [ "egg", "flour", "sugar" ]
-
-/// alternatively
-now.get( chef, {to: "mixCake"}, [ "egg", "flour", "sugar" ] );
-chef.cakeIngredients /// => [ "egg", "flour", "sugar" ]
 ```
+```javascript
+// Using this library
+now.get( chef, {to: "mixCake"}, "egg", "flour", "sugar" );
+chef.cakeIngredients // => [ "egg", "flour", "sugar" ]
+```
+
+...to bound functions
+
+```javascript
+// Native Javascript
+var boundFn = chef.mixCake.bind(chef, "egg", "flour", "sugar" )
+boundFn() // execute the bound function
+chef.cakeIngredients // => [ "egg", "flour", "sugar" ]
+```
+```javascript
+// Using this library
+var boundFn = then.get( chef, {to: "mixCake"}, "egg", "flour", "sugar" )
+boundFn() // execute the bound function
+chef.cakeIngredients // => [ "egg", "flour", "sugar" ]
+```
+
+#### Passing parameters as an array
+
+...to functions executed immediately
+
+```javascript
+// Native Javascript
+chef.mixcake.apply(chef, [ "egg", "flour", "sugar" ])
+chef.cakeIngredients // => [ "egg", "flour", "sugar" ]
+```
+```javascript
+// Using this library
+now.get( chef, {to: "mixCake", using: [ "egg", "flour", "sugar" ]} );
+chef.cakeIngredients // => [ "egg", "flour", "sugar" ]
+```
+
+...to bound functions
+
+```javascript
+// Native Javascript
+var boundFn = chef.mixCake.bind.apply(chef.mixCake, [chef].concat([ "egg", "flour", "sugar" ]))
+boundFn() // execute the bound function
+chef.cakeIngredients // => [ "egg", "flour", "sugar" ]
+```
+```javascript
+// Using this library
+var boundFn = then.get( chef, {to: "mixCake"}, using: [ "egg", "flour", "sugar" ] )
+boundFn() // execute the bound function
+chef.cakeIngredients // => [ "egg", "flour", "sugar" ]
+```
+
+#### Passing parameters 'normally' *and* as an array
+
+...to functions executed immediately
+
+```javascript
+// Native Javascript
+var partialIngredientsList = [ "egg", "flour" ]
+chef.mixcake.apply(chef, partialIngredientsList.concat(["sugar"]))
+chef.cakeIngredients // => [ "egg", "flour", "sugar" ]
+```
+```javascript
+// Using this library
+var partialIngredientsList = [ "egg", "flour" ]
+now.get( chef, {to: "mixCake", using: partialIngredientsList}, "sugar" );
+chef.cakeIngredients // => [ "egg", "flour", "sugar" ]
+```
+
+...to bound functions
+
+```javascript
+// Native Javascript
+var partialIngredientsList = [ "egg", "flour" ]
+var boundFn = chef.mixCake.bind.apply(chef.mixCake, [chef].concat(partialIngredientsList).concat([ "sugar" ]))
+boundFn("milk") // execute the bound function with another argument
+chef.cakeIngredients // => [ "egg", "flour", "sugar", "milk"]
+```
+```javascript
+// Using this library
+var partialIngredientsList = [ "egg", "flour" ]
+var boundFn = then.get( chef, {to: "mixCake", using: partialIngredientsList}, "sugar" )
+boundFn("milk") // execute the bound function with another argument
+chef.cakeIngredients // => [ "egg", "flour", "sugar", "milk" ]
+```
+
 
 ---
 ## Event Handling
@@ -207,13 +273,13 @@ now.when(husband, "hasCheated", function (husband) {
   wife.divorce(husband);
 });
 
-husband.marital_status /// => 'married'
-wife.marital_status /// => 'married'
+husband.marital_status // => 'married'
+wife.marital_status // => 'married'
 
 husband.cheat();
 
-husband.marital_status /// => 'single'
-wife.marital_status /// => 'single'
+husband.marital_status // => 'single'
+wife.marital_status // => 'single'
 ```
 ### Events emitted by more than one object
 
@@ -257,19 +323,19 @@ then.when([ squirrel, cat ],
             dog.chase(runningThing);
           });
 
-dog.state;  /// => "lazin' about"
+dog.state;  // => "lazin' about"
 
 wolf.run();
-dog.state;  /// => "lazin' about"
+dog.state;  // => "lazin' about"
 
 squirrel.run();
-dog.state;  /// => "chasing"
+dog.state;  // => "chasing"
 ```
 
 If we don't care what object is emitting the event we can pass the string `"anything"` as the first argument to the `when` function.
 
 ```javascript
-dog.state;  /// => "lazin' about"
+dog.state;  // => "lazin' about"
 
 then.when("anything",
           "isRunning",
@@ -278,18 +344,18 @@ then.when("anything",
           });
 
 wolf.run();
-dog.state;  /// => "chasing"
+dog.state;  // => "chasing"
 ```
 ### Combining event driven execution with binding to 'this'
 For the callback function passed as the third argument to the `when` function we can use the `then.get` syntax discussed earlier to bind the value of `this`.
 
 ```javascript
-/// Example 1
+// Example 1
 now.when(husband,
          "hasCheated",
          then.get(wife, {to: "divorce"}));
 
-/// Example 2
+// Example 2
 now.when("anything",
          "isRunning",
          then.get(dog, {to: "chase"}));
